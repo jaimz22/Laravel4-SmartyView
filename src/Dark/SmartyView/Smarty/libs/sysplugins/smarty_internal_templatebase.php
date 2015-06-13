@@ -183,7 +183,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
                         array_unshift($_template->_capture_stack,array());
 						
                         /// dark mad edit
-                        \Dark\SmartyView\SmartyEngine::integrateViewComposers($_template);               
+//                        \Dark\SmartyView\SmartyEngine::integrateViewComposers($_template);
                         /// end mad edit           
 						 
                         //

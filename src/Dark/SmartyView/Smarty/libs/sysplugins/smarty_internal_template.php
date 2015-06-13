@@ -282,7 +282,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
         }
 		
 		/// dark mad edit
-		\Dark\SmartyView\SmartyEngine::integrateViewComposers($tpl, $template);  
+		\Dark\SmartyView\SmartyEngine::integrateViewComposers($tpl, $template, $data);
 		/// end mad edit
 
         return $tpl->fetch(null, null, null, null, false, false, true);

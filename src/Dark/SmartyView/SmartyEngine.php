@@ -21,11 +21,10 @@ class SmartyEngine implements Engines\EngineInterface {
 	 * @param  array   $data
 	 * @return string
 	 */
-	public function get($path, array $data = array())
+	public function get($path, array $data = [])
 	{
 		return $this->evaluatePath($path, $data);
 	}
-
 
 	private static function smartyNameToViewName($filename){
 		$viewPos = strpos($filename, "views" . DS);
@@ -34,7 +33,7 @@ class SmartyEngine implements Engines\EngineInterface {
 		return str_replace(DS, ".", str_replace(".tpl", "", $filename));
 	}
 
-	public static function integrateViewComposers($_template, $forceName = false){
+	public static function integrateViewComposers($_template, $forceName = false,$data=null){
 		if(!is_a($_template, 'Smarty_Internal_Template'))
 			return;
 
@@ -43,7 +42,7 @@ class SmartyEngine implements Engines\EngineInterface {
 		if($forceName !== false && empty($_template->properties['file_dependency'])){
 			$viewName = self::smartyNameToViewName($forceName);
 			$view = new HackView($viewName);
-			$events->fire('composing: '.$view->getName(), array($view));
+			$events->fire('composing: '.$view->getName(), [$view,$data]);
 			foreach($view->getData() as $key => $value){
 				$_template->tpl_vars[$key] = new \Smarty_Variable($value);
 			}
@@ -54,7 +53,7 @@ class SmartyEngine implements Engines\EngineInterface {
 					$viewName = self::smartyNameToViewName($file[0]);
 
 					$view = new HackView($viewName);
-					$events->fire('composing: '.$view->getName(), array($view));
+					$events->fire('composing: '.$view->getName(), [$view, $data]);
 					foreach($view->getData() as $key => $value){
 						$_template->tpl_vars[$key] = new \Smarty_Variable($value);
 					}
@@ -80,7 +79,11 @@ class SmartyEngine implements Engines\EngineInterface {
 
 			$configKey = 'smartyView::';
 
-			$caching = $this->config[$configKey . 'caching'];
+			if (isset($__data['smarty']['config']['caching']['enabled'])) {
+				$caching = $__data['smarty']['config']['caching']['enabled'];
+			}else{
+				$caching = $this->config[$configKey.'caching'];
+			}
 			$cache_lifetime = $this->config[$configKey . 'cache_lifetime'];
 			$debugging = $this->config[$configKey . 'debugging'];
 
@@ -112,11 +115,14 @@ class SmartyEngine implements Engines\EngineInterface {
 			//$Smarty->escape_html = true;
 			$Smarty->error_reporting = E_ALL &~ E_NOTICE;
 
-			foreach ($__data as $var => $val) {
-				$Smarty->assign($var, $val);
+			if ($caching==true && isset($__data['smarty']['config']['caching']['id'])){
+				print $Smarty->display($__path,$__data['smarty']['config']['caching']['id']);
+			}else{
+				foreach ($__data as $var => $val) {
+					$Smarty->assign($var, $val);
+				}
+				print $Smarty->display($__path);
 			}
-
-			print $Smarty->display($__path);
 
 		} catch (\Exception $e) {
 			$this->handleViewException($e);
