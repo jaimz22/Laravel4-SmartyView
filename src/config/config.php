@@ -22,4 +22,12 @@ return array(
 	'plugins_paths'  => array(
 			\App::make('path').'/libraries/smarty/plugins',
 		),
+	'plugins'=>[
+		'smarty_compiler_switch'
+	],
+	'filters'=>[
+		'post'=> [
+			'smarty_postfilter_switch'
+		]
+	]
 );

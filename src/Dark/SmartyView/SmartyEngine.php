@@ -39,7 +39,8 @@ class SmartyEngine implements Engines\EngineInterface {
 
 		$events = \App::make('events');
 
-		if($forceName !== false && empty($_template->properties['file_dependency'])){
+		if($forceName !== false ){
+//		if($forceName !== false && empty($_template->properties['file_dependency'])){
 			$viewName = self::smartyNameToViewName($forceName);
 			$view = new HackView($viewName);
 			$events->fire('composing: '.$view->getName(), [$view,$data]);
@@ -93,6 +94,8 @@ class SmartyEngine implements Engines\EngineInterface {
 
 			// Get the plugins path from the configuration
 			$plugins_paths = $this->config[$configKey . 'plugins_paths'];
+			$plugins = $this->config[$configKey . 'plugins'];
+			$filters = $this->config[$configKey . 'filters'];
 
 			$Smarty = new \Smarty();
 
@@ -106,6 +109,16 @@ class SmartyEngine implements Engines\EngineInterface {
 			// existing folder.
 			foreach($plugins_paths as $path)
 				$Smarty->addPluginsDir($path);
+
+			foreach ($plugins as $plugin) {
+				$Smarty->loadPlugin($plugin);
+			}
+
+			foreach ($filters as $filterType=>$typeFilters) {
+				foreach ($typeFilters as $typeFilter) {
+					$Smarty->registerFilter($filterType, $typeFilter);
+				}
+			}
 
 			$Smarty->debugging = $debugging;
 			$Smarty->caching = $caching;
