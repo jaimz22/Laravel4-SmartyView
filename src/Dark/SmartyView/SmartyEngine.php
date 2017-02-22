@@ -29,6 +29,7 @@ class SmartyEngine implements Engines\EngineInterface {
 
 	private static function smartyNameToViewName($filename){
 		$viewPos = strpos($filename, "views" . DS);
+		$filename = str_replace('file:','',$filename);
 		if($viewPos !== false)
 			$filename = substr($filename, strpos($filename, "views" . DS) + 6);
 		return str_replace(DS, ".", str_replace(".tpl", "", $filename));
