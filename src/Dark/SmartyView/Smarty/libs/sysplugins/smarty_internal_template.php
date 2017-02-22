@@ -315,13 +315,13 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
             }
         }
 
-        if (!empty($data)) {
+        //if (!empty($data)) {
             // set up variable values
 	        \Dark\SmartyView\SmartyEngine::integrateViewComposers($tpl, $template, $data);
             foreach ($data as $_key => $_val) {
                 $tpl->tpl_vars[ $_key ] = new Smarty_Variable($_val, $this->isRenderingCache);
             }
-        }
+        //}
         if ($tpl->caching == 9999) {
             if (!isset($tpl->compiled)) {
                 $this->loadCompiled(true);
